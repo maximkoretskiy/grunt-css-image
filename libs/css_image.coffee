@@ -13,6 +13,7 @@ class CssImage
   template: _.template """
   .<%= className %>{
     <%= cssDesc %>
+    background-repeat: no-repeat;
   }
 
   """
@@ -88,13 +89,13 @@ class CssImage
     ctx = _.extend {}, opts
     ctx.retina = @retinaFactor
     path = @_getFullSizePath file
-    ctx.background = "background: url(\"#{path}\") no-repeat;"
+    ctx.background = "background-image: url(\"#{path}\");"
     result = ""
     if isRetina
       ctx.halfBackground = ''
       if !!@images_half_path
         halfPath = @_getHalfSizePath file, @images_path, @images_half_path
-        ctx.halfBackground = "background: url(\"#{halfPath}\") no-repeat;"
+        ctx.halfBackground = "background-image: url(\"#{halfPath}\");"
       @templateDesc2x ctx
     else
       @templateDesc ctx
