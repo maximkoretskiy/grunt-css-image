@@ -20,7 +20,7 @@ class CssImage
 
   templateDesc: _.template """
     <%= background %>
-    width: <%= width%>;
+    width: <%= width%>px;
     height: <%= height %>px;
     background-size: <%=width%>px <%=height%>px;
   """
