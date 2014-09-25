@@ -35,9 +35,9 @@ class CssImage
     <% } else { %>
     <%= background %>
     <% }%>
-    width: <%= width/retina %>px;
-    height: <%= height/retina %>px;
-    background-size: <%= width/retina %>px <%= height/retina %>px;
+    width: <%= Math.floor(width/retina) %>px;
+    height: <%= Math.floor(height/retina) %>px;
+    background-size: <%= Math.floor(width/retina) %>px <%= Math.floor(height/retina) %>px;
   """
 
   constructor: (opts={}) ->
