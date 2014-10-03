@@ -10,8 +10,15 @@ libpath = require("path")
 _ = require 'lodash'
 
 class CssImage
-  template: _.template """
+  templateClass: _.template """
   .<%= className %>{
+    <%= cssDesc %>
+    background-repeat: no-repeat;
+  }
+
+  """
+  templateMixin: _.template """
+  @mixin<%= className %>{
     <%= cssDesc %>
     background-repeat: no-repeat;
   }
@@ -66,7 +73,7 @@ class CssImage
     ctx = {}
     ctx.className = @_getClassName file, isRetina
     ctx.cssDesc = @_getCssDesc opts, isRetina
-    @template ctx
+    (@templateClass ctx) + (@templateMixin ctx)
 
   _getName: (file)-> libpath.basename file
 
