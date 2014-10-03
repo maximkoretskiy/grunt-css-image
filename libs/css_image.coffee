@@ -18,7 +18,7 @@ class CssImage
 
   """
   templateMixin: _.template """
-  @mixin<%= className %>{
+  @mixin <%= className %>{
     <%= cssDesc %>
     background-repeat: no-repeat;
   }
