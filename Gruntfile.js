@@ -29,18 +29,21 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     css_image: {
+      def_options: {
+        options: {
+        },
+        files:[{
+          cwd:"test/fixtures/images/",
+          src: "**/*.{png,jpg,gif,jpeg}",
+          dest: "tmp/_default.css"
+        }]
+      },
       custom_options: {
         options: {
           prefix:"custom-",
           images_path: "http://example.com",
           sep:"",
-          css_options:{
-            z_index:0,
-            display:"block",
-            text_indent:"-5000px",
-            background_color:"red",
-            background_position:"0px 0px",
-          },
+          retina: false
         },
         files:[{
           cwd:"test/fixtures/images/",
@@ -55,6 +58,17 @@ module.exports = function(grunt) {
           dest: "tmp/_nullimages.css"
         }]
       },
+      mixin_options: {
+        files:[{
+          cwd:"test/fixtures/images/",
+          src: "**/*.{png,jpg,gif,jpeg}",
+          dest: "tmp/_mixin.css"
+        }],
+        options: {
+          retina: 2,
+          generateMixin: true
+        }
+      },
       retina_options: {
         files:[{
           cwd:"test/fixtures/images/",
@@ -62,9 +76,7 @@ module.exports = function(grunt) {
           dest: "tmp/_retina.css"
         }],
         options: {
-          retina: 2,
-          prefix:"custom-",
-          sep: ""
+          retina: 2
         }
       }
     },
@@ -91,6 +103,8 @@ module.exports = function(grunt) {
     'css_image:retina_options',
     'css_image:custom_options',
     'css_image:null_options',
+    'css_image:mixin_options',
+    'css_image:def_options',
     'nodeunit']);
 
   // By default, lint and run all tests.

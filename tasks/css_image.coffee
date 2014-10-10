@@ -18,14 +18,7 @@ module.exports = (grunt) ->
     _ = grunt.util._
 
     # Merge task-specific and/or target-specific options with these defaults.
-    options = @options(
-      prefix: "img_"
-      images_path: "../images"
-      images_half_path: false
-      sep: "_"
-      css_options: {}
-      retina: 2
-    )
+    options = @options()
     info = []
     done = @async()
     counts = grunt.util._.reduce(@files, (memo, item) ->
@@ -37,17 +30,10 @@ module.exports = (grunt) ->
       info = _.sortBy opts.info, (item)->
         item.file
 
-      cssImage = new CssImage {
-        sep:options.sep
-        prefix:options.prefix
-        images_path:options.images_path
-        images_half_path:options.images_half_path
-        retinaFactor: options.retina
-      }
+      cssImage = new CssImage options
 
       txt = "/* This file is generated */\n"
       info.forEach (item) ->
-        console.log item.file
         txt += cssImage.getImageDesc item
 
       grunt.file.write dest, txt

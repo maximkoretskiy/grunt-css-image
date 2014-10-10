@@ -53,17 +53,21 @@ class CssImage
       images_path: ''
       images_half_path: false
       separator: '_'
-      retinaFactor: false
+      retina: false
+      generateClass: true
+      generateMixin: false
     }
     { @prefix
       @images_path
       @images_half_path
       @separator
-      @retinaFactor
+      @retina
+      @generateClass
+      @generateMixin
     } = opts
 
   getImageDesc: (opts)->
-    if !!@retinaFactor
+    if !!@retina
       (@_getImageStyle opts) + (@_getImageStyle opts, true)
     else
       @_getImageStyle opts
@@ -73,14 +77,16 @@ class CssImage
     ctx = {}
     ctx.className = @_getClassName file, isRetina
     ctx.cssDesc = @_getCssDesc opts, isRetina
-    (@templateClass ctx) + (@templateMixin ctx)
+    result = ""
+    result += @templateClass ctx if @generateClass
+    result += @templateMixin ctx if @generateMixin
+    result
 
   _getName: (file)-> libpath.basename file
 
   _getFolder: (file)->
     (libpath.dirname file)
     .replace (RegExp '^' + @images_path), ''
-
 
   _getFullSizePath: (path)->
     @images_path +  '/'+ path
@@ -94,7 +100,7 @@ class CssImage
   _getCssDesc: (opts, isRetina=false)->
     {file} = opts
     ctx = _.extend {}, opts
-    ctx.retina = @retinaFactor
+    ctx.retina = @retina
     path = @_getFullSizePath file
     ctx.background = "background-image: url(\"#{path}\");"
     result = ""
@@ -109,12 +115,13 @@ class CssImage
 
   _getClassName: (file, isRetina)->
     name = (@_getName file)
-      .replace /\.(png|jpg|jpeg|gif)/, ""
+      .replace /\.(png|jpg|jpeg|gif)/, "" #remove extensions
+      .replace /^//   #remove leading slash
     folder = (@_getFolder file)
-      .replace '/', '_'
-    className = "#{@prefix}#{folder}#{@separator}#{name}"
+      .replace '/', @separator
+    className = "#{@prefix}#{folder}#{name}"
       .replace '.', ''
-    className +="-#{@retinaFactor}x" if !!@retinaFactor and isRetina
+    className +="-#{@retina}x" if !!@retina and isRetina
     className
 
   module.exports = CssImage
