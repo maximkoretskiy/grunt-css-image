@@ -27,28 +27,26 @@ class CssImage
 
   templateDesc: _.template """
     <%= background %>
-    width: <%= width%>px;
-    height: <%= height %>px;
-    background-size: <%=width%>px <%=height%>px;
+      width: <%= width%>px;
+      height: <%= height %>px;
+      background-size: <%=width%>px <%=height%>px;
   """
 
   templateDesc2x: _.template """
     <% if(halfBackground) { %>
-    <%= halfBackground %>
+      <%= halfBackground %>
     @media  only screen and (min-device-pixel-ratio: 2),
     only screen and (min-resolution: 192dpi) {
       <%= background %>
     }
-    <% } else { %>
-    <%= background %>
-    <% }%>
-    width: <%= Math.floor(width/retina) %>px;
-    height: <%= Math.floor(height/retina) %>px;
-    background-size: <%= Math.floor(width/retina) %>px <%= Math.floor(height/retina) %>px;
+    <% } else { %><%= background %><% }%>
+      width: <%= Math.floor(width/retina) %>px;
+      height: <%= Math.floor(height/retina) %>px;
+      background-size: <%= Math.floor(width/retina) %>px <%= Math.floor(height/retina) %>px;
   """
 
   constructor: (opts={}) ->
-    opts = _.defaults opts, {
+    @opts = _.defaults opts, {
       prefix: 'img_'
       images_path: ''
       images_half_path: false
@@ -57,17 +55,9 @@ class CssImage
       generateClass: true
       generateMixin: false
     }
-    { @prefix
-      @images_path
-      @images_half_path
-      @separator
-      @retina
-      @generateClass
-      @generateMixin
-    } = opts
 
   getImageDesc: (opts)->
-    if !!@retina
+    if !!@opts.retina
       (@_getImageStyle opts) + (@_getImageStyle opts, true)
     else
       @_getImageStyle opts
@@ -78,8 +68,8 @@ class CssImage
     ctx.className = @_getClassName file, isRetina
     ctx.cssDesc = @_getCssDesc opts, isRetina
     result = ""
-    result += @templateClass ctx if @generateClass
-    result += @templateMixin ctx if @generateMixin
+    result += @templateClass ctx if @opts.generateClass
+    result += @templateMixin ctx if @opts.generateMixin
     result
 
   _getName: (file)-> libpath.basename file
@@ -89,18 +79,18 @@ class CssImage
     .replace (RegExp '^' + @images_path), ''
 
   _getFullSizePath: (path)->
-    @images_path +  '/'+ path
+    @opts.images_path +  '/'+ path
 
   #todo: refactor
   _getHalfSizePath: (path)->
     ext = libpath.extname path
     path = path.replace (RegExp "\\" + ext + '$'), "-50pc#{ext}"
-    @images_half_path +  '/'+ path
+    @opts.images_half_path +  '/'+ path
 
   _getCssDesc: (opts, isRetina=false)->
     {file} = opts
     ctx = _.extend {}, opts
-    ctx.retina = @retina
+    ctx.retina = @opts.retina
     path = @_getFullSizePath file
     ctx.background = "background-image: url(\"#{path}\");"
     result = ""
@@ -109,6 +99,7 @@ class CssImage
       if !!@images_half_path
         halfPath = @_getHalfSizePath file, @images_path, @images_half_path
         ctx.halfBackground = "background-image: url(\"#{halfPath}\");"
+      console.log ctx
       @templateDesc2x ctx
     else
       @templateDesc ctx
@@ -118,10 +109,10 @@ class CssImage
       .replace /\.(png|jpg|jpeg|gif)/, "" #remove extensions
       .replace /^//   #remove leading slash
     folder = (@_getFolder file)
-      .replace '/', @separator
-    className = "#{@prefix}#{folder}#{name}"
+      .replace '/', @opts.separator
+    className = "#{@opts.prefix}#{folder}#{name}"
       .replace '.', ''
-    className +="-#{@retina}x" if !!@retina and isRetina
+    className +="-#{@opts.retina}x" if !!@opts.retina and isRetina
     className
 
   module.exports = CssImage
